@@ -86,16 +86,6 @@ MEANINGLESS_DESCS = {
     "my first", "practice", "nothing", "update", "fix",
 }
 
-# 定向主题查询：每类直接映射到一组 GitHub topic 搜索，不再靠描述猜分类
-CATEGORY_QUERIES = [
-    ("🟠 Cloudflare/边缘", ["topic:cloudflare", "topic:workers", "topic:serverless"]),
-    ("🏠 自建服务", ["topic:self-hosted", "topic:homelab", "topic:docker"]),
-    ("🌐 网络与穿透", ["topic:proxy", "topic:tunnel", "topic:wireguard", "topic:vpn"]),
-    ("🤖 安卓逆向", ANDROID_TOOLS),
-    ("🔍 逆向与安全", ["topic:reverse-engineering", "topic:security-tools", "topic:pentest"]),
-    ("💻 CLI 与终端", ["topic:cli", "topic:tui", "topic:command-line"]),
-    ("🛠 开发工具", ["topic:developer-tools", "topic:automation", "topic:http-client"]),
-]
 # 安卓逆向白名单：topic 搜索会混进 Xposed 皮肤模块和抢票脚本，改成按仓库直接取
 ANDROID_TOOLS = [
     "frida/frida", "sensepost/objection", "skylot/jadx",
@@ -109,6 +99,16 @@ ANDROID_TOOLS = [
     "SimoneAvogadro/android-reverse-engineering-skill",
 ]
 
+# 定向主题查询：每类直接映射到一组 GitHub topic 搜索，不再靠描述猜分类
+CATEGORY_QUERIES = [
+    ("🟠 Cloudflare/边缘", ["topic:cloudflare", "topic:workers", "topic:serverless"]),
+    ("🏠 自建服务", ["topic:self-hosted", "topic:homelab", "topic:docker"]),
+    ("🌐 网络与穿透", ["topic:proxy", "topic:tunnel", "topic:wireguard", "topic:vpn"]),
+    ("🤖 安卓逆向", ANDROID_TOOLS),
+    ("🔍 逆向与安全", ["topic:reverse-engineering", "topic:security-tools", "topic:pentest"]),
+    ("💻 CLI 与终端", ["topic:cli", "topic:tui", "topic:command-line"]),
+    ("🛠 开发工具", ["topic:developer-tools", "topic:automation", "topic:http-client"]),
+]
 PER_CAT = 4          # 每类最终收录条数
 SEARCH_PER_QUERY = 25  # 每个 topic 查询取多少候选
 
