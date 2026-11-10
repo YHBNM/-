@@ -91,12 +91,24 @@ CATEGORY_QUERIES = [
     ("🟠 Cloudflare/边缘", ["topic:cloudflare", "topic:workers", "topic:serverless"]),
     ("🏠 自建服务", ["topic:self-hosted", "topic:homelab", "topic:docker"]),
     ("🌐 网络与穿透", ["topic:proxy", "topic:tunnel", "topic:wireguard", "topic:vpn"]),
-    ("🤖 安卓逆向", ["topic:frida", "topic:smali", "jadx+in:name",
-                    "android+reverse+in:description", "apk+decompiler+in:name,description"]),
+    ("🤖 安卓逆向", ANDROID_TOOLS),
     ("🔍 逆向与安全", ["topic:reverse-engineering", "topic:security-tools", "topic:pentest"]),
     ("💻 CLI 与终端", ["topic:cli", "topic:tui", "topic:command-line"]),
     ("🛠 开发工具", ["topic:developer-tools", "topic:automation", "topic:http-client"]),
 ]
+# 安卓逆向白名单：topic 搜索会混进 Xposed 皮肤模块和抢票脚本，改成按仓库直接取
+ANDROID_TOOLS = [
+    "frida/frida", "sensepost/objection", "skylot/jadx",
+    "iBotPeaches/Apktool", "MobSF/Mobile-Security-Framework-MobSF",
+    "androguard/androguard", "ax/apk.sh", "REAndroid/APKEditor",
+    "Konloch/bytecode-viewer", "charles2gan/GDA-android-reversing-Tool",
+    "vaibhavpandeyvpz/apkstudio", "APKLab/APKLab",
+    "ReVanced/revanced-patcher", "CreditTone/hooker",
+    "ViRb3/magisk-frida", "firerpa/lamda",
+    "LING71671/open-reverselab", "zinja-coder/jadx-mcp-server",
+    "SimoneAvogadro/android-reverse-engineering-skill",
+]
+
 PER_CAT = 4          # 每类最终收录条数
 SEARCH_PER_QUERY = 25  # 每个 topic 查询取多少候选
 
@@ -215,6 +227,21 @@ def get_previous_projects(count=2):
     return prev
 
 
+def _repo(full_name: str):
+    """直接取单个仓库元数据（白名单类用）。"""
+    token = get_token()
+    headers = ["-H", f"Authorization: token {token}"] if token else []
+    url = f"https://api.github.com/repos/{full_name}"
+    out, code = run(["curl", "-s"] + headers + [url], timeout=20)
+    if code != 0 or not out:
+        return None
+    try:
+        d = json.loads(out)
+    except json.JSONDecodeError:
+        return None
+    return d if d.get("full_name") else None
+
+
 def _search(q: str, per_page: int = 15):
     """一次 GitHub 搜索，返回 repo 列表（失败返回空）。"""
     token = get_token()
@@ -241,6 +268,18 @@ def fetch_repos():
 
     for cat, queries in CATEGORY_QUERIES:
         bucket = []
+        if cat == "🤖 安卓逆向":
+            for full_name in ANDROID_TOOLS:
+                r = _repo(full_name)
+                if r and r["full_name"] not in seen and is_valid_project(r):
+                    seen.add(r["full_name"])
+                    bucket.append(r)
+            bucket.sort(key=lambda r: r["stargazers_count"], reverse=True)
+            picked = bucket[:PER_CAT]
+            print(f"  {cat}: 白名单 {len(bucket)} → 收录 {len(picked)}")
+            if picked:
+                result.append((cat, picked))
+            continue
         for q in queries:
             items = _search(f"{q} stars:>100 pushed:>{since}", SEARCH_PER_QUERY)
             for r in items:
