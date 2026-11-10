@@ -249,8 +249,11 @@ def fetch_repos():
                     continue
                 seen.add(name)
                 bucket.append(r)
-        random.shuffle(bucket)
-        picked = bucket[:PER_CAT]
+        # 先按星数取头部池子，再随机抽，兼顾「热门」和每期有变化
+        bucket.sort(key=lambda r: r["stargazers_count"], reverse=True)
+        pool = bucket[:max(PER_CAT * 6, 20)]
+        random.shuffle(pool)
+        picked = pool[:PER_CAT]
         print(f"  {cat}: 候选 {len(bucket)} → 收录 {len(picked)}")
         if picked:
             result.append((cat, picked))
