@@ -98,7 +98,7 @@ CATEGORY_QUERIES = [
     ("🛠 开发工具", ["topic:developer-tools", "topic:automation", "topic:http-client"]),
 ]
 PER_CAT = 4          # 每类最终收录条数
-SEARCH_PER_QUERY = 15  # 每个 topic 查询取多少候选
+SEARCH_PER_QUERY = 25  # 每个 topic 查询取多少候选
 
 # AI 相关关键词（避免过度推荐）
 AI_BLOCKLIST = {"llm", "gpt", "chatgpt", "openai", "langchain", "rag", "vector-db",
@@ -145,7 +145,7 @@ def is_valid_project(r):
     repo = name.split("/")[-1].lower()
     stars = r.get("stargazers_count", 0)
 
-    if stars < 100 or stars > 60000:
+    if stars < 300 or stars > 60000:
         return False
     if repo in ("awesome", "awesome-list") or desc.startswith("a curated list") or desc.startswith("curated list"):
         return False
