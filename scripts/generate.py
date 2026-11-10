@@ -91,6 +91,8 @@ CATEGORY_QUERIES = [
     ("🟠 Cloudflare/边缘", ["topic:cloudflare", "topic:workers", "topic:serverless"]),
     ("🏠 自建服务", ["topic:self-hosted", "topic:homelab", "topic:docker"]),
     ("🌐 网络与穿透", ["topic:proxy", "topic:tunnel", "topic:wireguard", "topic:vpn"]),
+    ("🤖 安卓逆向", ["topic:frida", "topic:xposed", "topic:smali",
+                    "android+reverse+in:description", "apk+decompiler+in:name,description"]),
     ("🔍 逆向与安全", ["topic:reverse-engineering", "topic:security-tools", "topic:pentest"]),
     ("💻 CLI 与终端", ["topic:cli", "topic:tui", "topic:command-line"]),
     ("🛠 开发工具", ["topic:developer-tools", "topic:automation", "topic:http-client"]),
