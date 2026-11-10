@@ -135,13 +135,19 @@ def translate(text):
         return text
     try:
         q = urllib.parse.quote(text[:500])
-        url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&q={q}"
-        out, code = run(["curl", "-s", url], timeout=10)
+        # clients5 dict-chrome-ex 端点：dc IP 上 gtx 会 429，这个还能用
+        url = f"https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=en&tl=zh-CN&q={q}"
+        out, code = run(["curl", "-s", "-A", "Mozilla/5.0", url], timeout=10)
         if code == 0 and out:
             data = json.loads(out)
-            parts = [item[0] for item in data[0] if item[0]]
-            result = "".join(parts)
-            return result if result else text
+            if isinstance(data, list) and data and isinstance(data[0], str):
+                result = "".join(data)
+                if result:
+                    return result
+            elif isinstance(data, list) and data and isinstance(data[0], list):
+                result = "".join(x[0] for x in data[0] if x and x[0])
+                if result:
+                    return result
     except Exception:
         pass
     return text
